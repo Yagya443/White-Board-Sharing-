@@ -11,8 +11,20 @@ import {
     Share2,
     Users,
 } from "lucide-react";
+import { useRef, useState } from "react";
+import WhiteBoard from "../Components/WhiteBoard";
 
 const BoardPage = () => {
+    const [color, setColor] = useState("#000000");
+    const [tool, setTool] = useState("pencil");
+    const [element, setElement] = useState([]);
+
+    const canvasRef = useRef(null);
+    const ctxRef = useRef(null);
+
+    // console.log(element);
+    
+
     return (
         <div className="h-screen w-full bg-[#f5f5f5] overflow-hidden">
             {/* Top Navbar */}
@@ -25,36 +37,54 @@ const BoardPage = () => {
                 <div className="flex items-center gap-4">
                     <div className="flex items-center gap-2 bg-gray-100 rounded-full px-4 py-2">
                         <Users size={18} />
-                        <span>4 Online</span>
+                        <span>0 Online</span>
                     </div>
 
                     <button className="bg-blue-600 text-white px-5 py-2 rounded-lg hover:bg-blue-700">
                         <Share2 size={18} className="inline mr-2" />
                         Share
                     </button>
+                    <button className="bg-blue-600 text-white px-5 py-2 rounded-lg hover:bg-blue-700">
+                        <Download size={18} className="inline mr-2" />
+                        Download
+                    </button>
+                    {/* < /> */}
                 </div>
             </div>
 
-            {/* Left Toolbar */}
-
             <div className="absolute top-24 left-6 bg-white rounded-2xl shadow-lg p-3 flex flex-col gap-3 z-20">
-                <button className="p-3 rounded-xl hover:bg-gray-100">
+                <button
+                    className="p-3 rounded-xl hover:bg-gray-100"
+                    onClick={(e) => setTool("pointer")}
+                >
                     <MousePointer2 />
                 </button>
 
-                <button className="p-3 rounded-xl bg-blue-100 text-blue-600">
+                <button
+                    className="p-3 rounded-xl bg-blue-100 text-blue-600"
+                    onClick={(e) => setTool("pencil")}
+                >
                     <Pencil />
                 </button>
 
-                <button className="p-3 rounded-xl hover:bg-gray-100">
+                <button
+                    className="p-3 rounded-xl hover:bg-gray-100"
+                    onClick={(e) => setTool("square")}
+                >
                     <Square />
                 </button>
 
-                <button className="p-3 rounded-xl hover:bg-gray-100">
+                <button
+                    className="p-3 rounded-xl hover:bg-gray-100"
+                    onClick={(e) => setTool("circle")}
+                >
                     <Circle />
                 </button>
 
-                <button className="p-3 rounded-xl hover:bg-gray-100">
+                <button
+                    className="p-3 rounded-xl hover:bg-gray-100"
+                    onClick={(e) => setTool("eraser")}
+                >
                     <Eraser />
                 </button>
 
@@ -73,43 +103,22 @@ const BoardPage = () => {
                 </button>
             </div>
 
-            {/* Right Color Palette */}
-
             <div className="absolute top-28 right-6 bg-white rounded-2xl shadow-lg p-4 z-20">
                 <p className="font-semibold mb-3">Colors</p>
-
-                <div className="grid grid-cols-2 gap-3">
-                    <button className="w-10 h-10 rounded-full bg-black"></button>
-                    <button className="w-10 h-10 rounded-full bg-red-500"></button>
-                    <button className="w-10 h-10 rounded-full bg-blue-500"></button>
-                    <button className="w-10 h-10 rounded-full bg-green-500"></button>
-                    <button className="w-10 h-10 rounded-full bg-yellow-400"></button>
-                    <button className="w-10 h-10 rounded-full bg-purple-500"></button>
-                </div>
+                <label htmlFor="color">Select Color:</label>
+                <input
+                    type="color"
+                    id="color"
+                    value={color}
+                    onChange={(e) => e.target.value}
+                    // className="mt-1"
+                />
             </div>
 
-            {/* Bottom Controls */}
-
-            <div className="absolute bottom-6 left-1/2 -translate-x-1/2 bg-white shadow-lg rounded-full px-8 py-3 flex gap-6 z-20">
-                <button>
-                    <Undo2 />
-                </button>
-
-                <button>
-                    <Redo2 />
-                </button>
-
-                <button>
-                    <Download />
-                </button>
+            <div className="absolute top-0 left-0 w-full h-full cursor-crosshair">
+                <WhiteBoard canvasRef={canvasRef} ctxRef={ctxRef} element={element} setElement={setElement}/>
+                {/* <h1>{JSON.stringify(element)}</h1> */}
             </div>
-
-            {/* Whiteboard Canvas */}
-
-            <canvas
-                id="canvas"
-                className="absolute top-0 left-0 w-full h-full cursor-crosshair"
-            />
         </div>
     );
 };
