@@ -23,7 +23,6 @@ const BoardPage = () => {
     const ctxRef = useRef(null);
 
     // console.log(element);
-    
 
     return (
         <div className="h-screen w-full bg-[#f5f5f5] overflow-hidden">
@@ -54,35 +53,35 @@ const BoardPage = () => {
 
             <div className="absolute top-24 left-6 bg-white rounded-2xl shadow-lg p-3 flex flex-col gap-3 z-20">
                 <button
-                    className="p-3 rounded-xl hover:bg-gray-100"
+                    className={`p-3 rounded-xl  ${tool === "pointer" ? "bg-blue-100 text-blue-600 " : "hover:bg-gray-100"}`}
                     onClick={(e) => setTool("pointer")}
                 >
                     <MousePointer2 />
                 </button>
 
                 <button
-                    className="p-3 rounded-xl bg-blue-100 text-blue-600"
+                    className={`p-3 rounded-xl  ${tool === "pencil" ? "bg-blue-100 text-blue-600 " : "hover:bg-gray-100"}`}
                     onClick={(e) => setTool("pencil")}
                 >
                     <Pencil />
                 </button>
 
                 <button
-                    className="p-3 rounded-xl hover:bg-gray-100"
+                    className={`p-3 rounded-xl  ${tool === "square" ? "bg-blue-100 text-blue-600 " : "hover:bg-gray-100"}`}
                     onClick={(e) => setTool("square")}
                 >
                     <Square />
                 </button>
 
                 <button
-                    className="p-3 rounded-xl hover:bg-gray-100"
+                    className={`p-3 rounded-xl  ${tool === "circle" ? "bg-blue-100 text-blue-600 " : "hover:bg-gray-100"}`}
                     onClick={(e) => setTool("circle")}
                 >
                     <Circle />
                 </button>
 
                 <button
-                    className="p-3 rounded-xl hover:bg-gray-100"
+                    className={`p-3 rounded-xl  ${tool === "eraser" ? "bg-blue-100 text-blue-600 " : "hover:bg-gray-100"}`}
                     onClick={(e) => setTool("eraser")}
                 >
                     <Eraser />
@@ -116,7 +115,13 @@ const BoardPage = () => {
             </div>
 
             <div className="absolute top-0 left-0 w-full h-full cursor-crosshair">
-                <WhiteBoard canvasRef={canvasRef} ctxRef={ctxRef} element={element} setElement={setElement}/>
+                <WhiteBoard
+                    canvasRef={canvasRef}
+                    ctxRef={ctxRef}
+                    element={element}
+                    setElement={setElement}
+                    tool={tool}
+                />
                 {/* <h1>{JSON.stringify(element)}</h1> */}
             </div>
         </div>

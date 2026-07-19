@@ -3,7 +3,7 @@ import roughjs from "roughjs";
 
 const roughGenerator = roughjs.generator();
 
-const WhiteBoard = ({ canvasRef, ctxRef, element, setElement }) => {
+const WhiteBoard = ({ canvasRef, ctxRef, element, setElement, tool }) => {
     // const canvasRef = useRef(null);
     // const ctxRef = useRef(null);
 
@@ -16,18 +16,38 @@ const WhiteBoard = ({ canvasRef, ctxRef, element, setElement }) => {
 
         setIsDrawing(true);
 
+        switch (tool) {
+            case "pencil":
+                setElement((prev) => [
+                    ...prev,
+                    {
+                        type: "pencil",
+                        stroke: "black",
+                        path: [[offsetX, offsetY]],
+                    },
+                ]);
+                break;
+
+            case "square":
+                setElement((prev) => [
+                    ...prev,
+                    {
+                        type: "square",
+                        stroke: "black",
+                        x1: offsetX,
+                        y1: offsetY,
+                        x2: offsetX,
+                        y2: offsetY,
+                    },
+                ]);
+                break;
+
+            default:
+                break;
+        }
         // Create a new stroke
-        setElement((prev) => [
-            ...prev,
-            {
-                type: "pencil",
-                stroke: "black",
-                path: [[offsetX, offsetY]],
-            },
-        ]);
     };
 
-    console.log(element);
     const handleMouseUp = (e) => {
         // console.log("Mouse Up", e.target);
 
@@ -38,28 +58,66 @@ const WhiteBoard = ({ canvasRef, ctxRef, element, setElement }) => {
 
         const { offsetX, offsetY } = e.nativeEvent;
 
-        setElement((prev) => {
-            // Copy previous array
-            const updated = [...prev];
+        switch (tool) {
+            case "pencil":
+                setElement((prev) => {
+                    // Copy previous array
+                    const updated = [...prev];
+                    // Get the last stroke
+                    const lastStroke = updated[updated.length - 1];
+                    // Create updated stroke
+                    updated[updated.length - 1] = {
+                        ...lastStroke,
+                        path: [...lastStroke.path, [offsetX, offsetY]],
+                    };
 
-            // Get the last stroke
-            const lastStroke = updated[updated.length - 1];
+                    return updated;
+                });
+                break;
+            case "square":
+                console.log("Hello");
 
-            // Create updated stroke
-            updated[updated.length - 1] = {
-                ...lastStroke,
-                path: [...lastStroke.path, [offsetX, offsetY]],
-            };
+                setElement((prev) => {
+                    const updated = [...prev];
 
-            return updated;
-        });
+                    const lastSquare = updated[updated.length - 1];
+
+                    updated[updated.length - 1] = {
+                        ...lastSquare,
+                        x2: offsetX,
+                        y2: offsetY,
+                    };
+
+                    return updated;
+                });
+                break;
+
+            default:
+                break;
+        }
     };
 
     useLayoutEffect(() => {
         const roughCanvas = roughjs.canvas(canvasRef.current);
 
         element.forEach((ele) => {
-            roughCanvas.linearPath(ele.path);
+            switch (ele.type) {
+                case "pencil":
+                    roughCanvas.linearPath(ele.path);
+                    break;
+
+                case "square":
+                    roughCanvas.rectangle(
+                        ele.x1,
+                        ele.y1,
+                        ele.x2 - ele.x1,
+                        ele.y2 - ele.y1,
+                    );
+                    break;
+
+                default:
+                    break;
+            }
         });
     }, [element]);
 
