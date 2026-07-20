@@ -16,7 +16,7 @@ import WhiteBoard from "../Components/WhiteBoard";
 
 const BoardPage = () => {
     const [color, setColor] = useState("#000000");
-    const [tool, setTool] = useState("pencil");
+    const [tool, setTool] = useState("pointer");
     const [element, setElement] = useState([]);
 
     const canvasRef = useRef(null);
@@ -109,7 +109,7 @@ const BoardPage = () => {
                     type="color"
                     id="color"
                     value={color}
-                    onChange={(e) => e.target.value}
+                    onChange={(e) => setColor(e.target.value)}
                     // className="mt-1"
                 />
             </div>
@@ -121,6 +121,7 @@ const BoardPage = () => {
                     element={element}
                     setElement={setElement}
                     tool={tool}
+                    color={color}
                 />
                 {/* <h1>{JSON.stringify(element)}</h1> */}
             </div>
