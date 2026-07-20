@@ -11,18 +11,48 @@ import {
     Share2,
     Users,
 } from "lucide-react";
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import WhiteBoard from "../Components/WhiteBoard";
 
 const BoardPage = () => {
     const [color, setColor] = useState("#000000");
     const [tool, setTool] = useState("pointer");
     const [element, setElement] = useState([]);
+    const [redoStack, setRedoStack] = useState([]);
 
     const canvasRef = useRef(null);
     const ctxRef = useRef(null);
 
     // console.log(element);
+
+    function handleUndo() {
+        setElement((prev) => {
+            if (prev.length === 0) return prev;
+
+            const updated = [...prev];
+            const last = updated.pop();
+
+            setRedoStack((redo) => [...redo, last]);
+
+            return updated;
+        });
+    }
+
+    function handleRedo() {
+        if (redoStack.length === 0) return;
+        const lastRedo = redoStack[redoStack.length - 1];
+        setElement((prev) => [...prev, lastRedo]);
+        setRedoStack((prev) => prev.slice(0, -1));
+    }
+    function handleDeleteAll() {
+        setElement([]);
+    }
+
+    // useEffect(() => {
+    //     handleRedo();
+    //     handleUndo();
+    //     handleDeleteAll();
+    // }, [element]);
 
     return (
         <div className="h-screen w-full bg-[#f5f5f5] overflow-hidden">
@@ -90,15 +120,15 @@ const BoardPage = () => {
                 <hr />
 
                 <button className="p-3 rounded-xl hover:bg-gray-100">
-                    <Undo2 />
+                    <Undo2 onClick={handleUndo} />
                 </button>
 
                 <button className="p-3 rounded-xl hover:bg-gray-100">
-                    <Redo2 />
+                    <Redo2 onClick={handleRedo} />
                 </button>
 
                 <button className="p-3 rounded-xl hover:bg-red-100 text-red-600">
-                    <Trash2 />
+                    <Trash2 onClick={handleDeleteAll} />
                 </button>
             </div>
 
@@ -122,6 +152,8 @@ const BoardPage = () => {
                     setElement={setElement}
                     tool={tool}
                     color={color}
+                    // handleUndo={handleUndo}
+                    setRedoStack={setRedoStack}
                 />
                 {/* <h1>{JSON.stringify(element)}</h1> */}
             </div>

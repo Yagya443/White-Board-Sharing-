@@ -10,6 +10,8 @@ const WhiteBoard = ({
     setElement,
     tool,
     color,
+    handleUndo,
+    setRedoStack,
 }) => {
     // const canvasRef = useRef(null);
     // const ctxRef = useRef(null);
@@ -47,9 +49,26 @@ const WhiteBoard = ({
                 ]);
                 break;
 
+            case "circle":
+                setElement((prev) => [
+                    ...prev,
+                    {
+                        type: "circle",
+                        stroke: color,
+                        x1: offsetX,
+                        y1: offsetY,
+                        x2: offsetX,
+                        y2: offsetY,
+                    },
+                ]);
+                break;
+
+            case "eraser":
+
             default:
                 break;
         }
+        setRedoStack(element);
         // Create a new stroke
     };
 
@@ -58,11 +77,9 @@ const WhiteBoard = ({
     };
     const handleMouseMove = (e) => {
         const { offsetX, offsetY } = e.nativeEvent;
-        console.log("Is 1");
+        // console.log("Is 1");
 
         if (isDrawing) {
-            // console.log('Is 2');
-
             switch (tool) {
                 case "pencil":
                     setElement((prev) => {
@@ -76,7 +93,23 @@ const WhiteBoard = ({
                         return updated;
                     });
                     break;
+
                 case "square":
+                    setElement((prev) =>
+                        prev.map((ele, index) => {
+                            if (index === prev.length - 1) {
+                                return {
+                                    ...ele,
+                                    x2: offsetX,
+                                    y2: offsetY,
+                                };
+                            }
+                            return ele;
+                        }),
+                    );
+                    break;
+
+                case "circle":
                     setElement((prev) =>
                         prev.map((ele, index) => {
                             if (index === prev.length - 1) {
@@ -94,6 +127,7 @@ const WhiteBoard = ({
                 default:
                     break;
             }
+            setRedoStack(element);
         }
     };
 
@@ -111,10 +145,10 @@ const WhiteBoard = ({
         const canvas = canvasRef.current;
         const ctx = ctxRef.current;
 
+        // console.log(element);
+
         if (!canvas || !ctx) return;
-
         ctx.clearRect(0, 0, canvas.width, canvas.height);
-
         const roughCanvas = roughjs.canvas(canvas);
 
         element.forEach((ele) => {
@@ -124,7 +158,6 @@ const WhiteBoard = ({
                         stroke: ele.stroke,
                     });
                     break;
-
                 case "square":
                     roughCanvas.rectangle(
                         ele.x1,
@@ -134,11 +167,20 @@ const WhiteBoard = ({
                         { stroke: ele.stroke },
                     );
                     break;
+                case "circle":
+                    const radius = Math.sqrt(
+                        (ele.x2 - ele.x1) ** 2 + (ele.y2 - ele.y1) ** 2,
+                    );
+                    roughCanvas.circle(ele.x1, ele.y1, radius * 2, {
+                        stroke: ele.stroke,
+                    });
+                    break;
 
                 default:
                     break;
             }
         });
+        // handleUndo()
     }, [element]);
 
     return (
