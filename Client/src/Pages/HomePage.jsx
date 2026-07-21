@@ -13,8 +13,13 @@ import {
 } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import WhiteBoard from "../Components/WhiteBoard";
+import { socket } from "../socket";
 
 const BoardPage = () => {
+
+
+
+
     const [color, setColor] = useState("#000000");
     const [tool, setTool] = useState("pointer");
     const [element, setElement] = useState([]);
@@ -22,6 +27,18 @@ const BoardPage = () => {
 
     const canvasRef = useRef(null);
     const ctxRef = useRef(null);
+
+
+     useEffect(() => {
+        socket.on("userJoined", (data) => {
+            console.log("Joined:", data.name);
+        }); 
+
+        return () => {
+            socket.off("userJoined");
+        };
+    }, []);
+
 
     // console.log(element);
 
