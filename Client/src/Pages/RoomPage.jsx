@@ -14,11 +14,7 @@ const RoomPage = ({ uuid }) => {
    
     return (
         <div className="min-h-screen min-w-screen flex items-center justify-center gap-8">
-            {/* <div className="flex w-96 max-h-[350px] py-4 flex-col gap-5 rounded-xl border border-gray-300 bg-white px-6 shadow-lg">
-                <div className="flex flex-col gap-2">
-                    
-                </div>
-            </div> */}
+           
 
             <div className="flex w-96 min-h-[350px] py-3 flex-col gap-5 rounded-xl border border-gray-300 bg-white p-6 shadow-lg">
                 <h2 className="text-2xl font-semibold">Create Room</h2>

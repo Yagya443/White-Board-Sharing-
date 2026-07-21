@@ -20,7 +20,7 @@ const App = () => {
     return (
         <Routes>
             <Route path="/" element={<RoomPage uuid={uuid} />} />
-            <Route path="/:roomId" element={<HomePage />} />
+            <Route path="/:roomCode" element={<HomePage />} />
         </Routes>
     );
 };

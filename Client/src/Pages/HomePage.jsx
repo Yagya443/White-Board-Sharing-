@@ -14,12 +14,9 @@ import {
 import { useEffect, useRef, useState } from "react";
 import WhiteBoard from "../Components/WhiteBoard";
 import { socket } from "../socket";
+import { useParams } from "react-router-dom";
 
 const BoardPage = () => {
-
-
-
-
     const [color, setColor] = useState("#000000");
     const [tool, setTool] = useState("pointer");
     const [element, setElement] = useState([]);
@@ -27,20 +24,20 @@ const BoardPage = () => {
 
     const canvasRef = useRef(null);
     const ctxRef = useRef(null);
+    const { roomCode } = useParams();
 
+    console.log("roomCode", roomCode);
+    
 
-     useEffect(() => {
+    useEffect(() => {
         socket.on("userJoined", (data) => {
             console.log("Joined:", data.name);
-        }); 
+        });
 
         return () => {
             socket.off("userJoined");
         };
     }, []);
-
-
-    // console.log(element);
 
     function handleUndo() {
         setElement((prev) => {

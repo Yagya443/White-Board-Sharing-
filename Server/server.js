@@ -16,13 +16,37 @@ app.get("/", (req, res) => {
     res.send("Hello ");
 });
 
+// io.on("connection", (socket) => {
+//     console.log("Connected:", socket.id);
+
+//     socket.on("userJoined", ({ name, roomCode }) => {
+//         socket.join(roomCode);
+
+//         socket.roomCode = roomCode;
+//         socket.name = name;
+
+//         console.log(`${name} joined ${roomCode}`);
+//     });
+
+//     socket.on("disconnect", () => {
+//         console.log("Disconnected:", socket.id);
+//     });
+// });
+
 io.on("connection", (socket) => {
     console.log("Connected:", socket.id);
+    socket.on("userJoined", ({ name, roomCode }) => {
+        socket.join(roomCode);
+        console.log(`${name} joined ${roomCode}`);
 
-    socket.on("userJoined", (roomData) => {
-        console.log(`${roomData.name} joined`);
+        io.to(roomCode).emit("userJoined", {
+            name,
+            roomCode,
+        });
+    });
 
-        io.emit("userJoined", roomData);
+    socket.on("drawing", ({ roomCode, element }) => {
+        socket.to(roomCode).emit("drawing", element);
     });
 
     socket.on("disconnect", () => {
