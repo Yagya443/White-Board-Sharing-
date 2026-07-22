@@ -10,6 +10,7 @@ import {
     Download,
     Share2,
     Users,
+    Copy,
 } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import WhiteBoard from "../Components/WhiteBoard";
@@ -26,16 +27,19 @@ const BoardPage = () => {
     const ctxRef = useRef(null);
     const { roomCode } = useParams();
 
-    console.log("roomCode", roomCode);
-    
+    // console.log("roomCode", roomCode);
 
     useEffect(() => {
         socket.on("userJoined", (data) => {
             console.log("Joined:", data.name);
         });
+        socket.on("deleteAll", () => {
+            setElement([]);
+        });
 
         return () => {
             socket.off("userJoined");
+            socket.off("deleteAll");
         };
     }, []);
 
@@ -60,6 +64,10 @@ const BoardPage = () => {
     }
     function handleDeleteAll() {
         setElement([]);
+
+        socket.emit("deleteAll", {
+            roomCode,
+        });
     }
 
     // useEffect(() => {
@@ -74,7 +82,18 @@ const BoardPage = () => {
             <div className="absolute top-0 left-0 right-0 h-16 bg-white shadow flex justify-between items-center px-6 z-20">
                 <div>
                     <h1 className="text-xl font-bold">WhiteBoard</h1>
-                    <p className="text-sm text-gray-500">Room: A7B29F</p>
+                    <div className="flex items-center gap-2">
+                        <p className="text-sm text-gray-500">
+                            Room: {roomCode}
+                        </p>
+                        <Copy
+                            size={15}
+                            className="cursor-pointer"
+                            onClick={() =>
+                                navigator.clipboard.writeText(roomCode)
+                            }
+                        />
+                    </div>
                 </div>
 
                 <div className="flex items-center gap-4">

@@ -16,43 +16,52 @@ app.get("/", (req, res) => {
     res.send("Hello ");
 });
 
-// io.on("connection", (socket) => {
-//     console.log("Connected:", socket.id);
-
-//     socket.on("userJoined", ({ name, roomCode }) => {
-//         socket.join(roomCode);
-
-//         socket.roomCode = roomCode;
-//         socket.name = name;
-
-//         console.log(`${name} joined ${roomCode}`);
-//     });
-
-//     socket.on("disconnect", () => {
-//         console.log("Disconnected:", socket.id);
-//     });
-// });
-
 io.on("connection", (socket) => {
     console.log("Connected:", socket.id);
+
     socket.on("userJoined", ({ name, roomCode }) => {
         socket.join(roomCode);
-        console.log(`${name} joined ${roomCode}`);
 
-        io.to(roomCode).emit("userJoined", {
-            name,
-            roomCode,
-        });
+        socket.roomCode = roomCode;
+        socket.name = name;
+
+        console.log(`${name} joined ${roomCode}`);
     });
 
-    socket.on("drawing", ({ roomCode, element }) => {
-        socket.to(roomCode).emit("drawing", element);
+    socket.on("drawing", ({ roomCode, element, isNew }) => {
+        socket.to(roomCode).emit("drawing", { element, isNew });
+    });
+    socket.on("deleteAll", ({ roomCode }) => {
+        console.log("Deleting All");
+        
+        socket.to(roomCode).emit("deleteAll");
     });
 
     socket.on("disconnect", () => {
         console.log("Disconnected:", socket.id);
     });
 });
+
+// io.on("connection", (socket) => {
+//     console.log("Connected:", socket.id);
+//     socket.on("userJoined", ({ name, roomCode }) => {
+//         socket.join(roomCode);
+//         console.log(`${name} joined ${roomCode}`);
+
+//         io.to(roomCode).emit("userJoined", {
+//             name,
+//             roomCode,
+//         });
+//     });
+
+//     socket.on("drawing", ({ roomCode, element }) => {
+//         socket.to(roomCode).emit("drawing", element);
+//     });
+
+//     socket.on("disconnect", () => {
+//         console.log("Disconnected:", socket.id);
+//     });
+// });
 
 server.listen(3000, () => {
     console.log("Server is been connected");
